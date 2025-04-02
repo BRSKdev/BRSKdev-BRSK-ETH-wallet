@@ -1,0 +1,11 @@
+# Environment variables
+.env
+wallet-api/.env
+wallet-client/.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Wallet-Client
+wallet-client/build/
