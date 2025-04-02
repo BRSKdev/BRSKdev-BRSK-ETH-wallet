@@ -1,4 +1,6 @@
-#!/Users/moreno/Desktop/wallet-client/.venv/bin/python3.11
+#!/bin/sh
+'''exec' "/Users/moreno/Dev/Projects/ETH WALLET/wallet-client/.venv/bin/python3.13" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
