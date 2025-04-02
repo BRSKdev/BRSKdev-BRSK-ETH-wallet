@@ -83,11 +83,11 @@ class Client:
                 print(f"\nWallet Name: \033[92m{wallet_data['wallet_name']}\033[0m")
                 print(f"Address: \033[92m{wallet_data['address']}\033[0m")
                 print(f"Private Key: \033[93m{wallet_data['private_key']}\033[0m")
-                if wallet_data.get('memoric_phrase'):
-                    print("\n\033[91mIMPORTANT: Save this Memoric Phrase securely!\033[0m")
-                    print(f"\033[93m{wallet_data['memoric_phrase']}\033[0m")
+                if wallet_data.get('mnemonic_phrase'):
+                    print("\n\033[91mIMPORTANT: Save this Mnemonic Phrase securely!\033[0m")
+                    print(f"\033[93m{wallet_data['mnemonic_phrase']}\033[0m")
 
-                print("\n\033[91mIMPORTANT: Save the Private Key and the Memoric Phrase securely!\033[0m")
+                print("\n\033[91mIMPORTANT: Save the Private Key and the Mnemonic Phrase securely!\033[0m")
                 print("\033[91mIf you lose them, you will not be able to access your Wallet!\033[0m")
                 input("\nPress Enter to continue...")
 
@@ -134,7 +134,7 @@ class Client:
             return
         try:
             os.system("clear")
-            print("\n\033[92mWallet löschen\033[0m")
+            print("\n\033[92mDelete wallet\033[0m")
             print(f"\nWallet: \033[92m{self.current_wallet['wallet_name']}\033[0m")
             print(f"Address: \033[92m{self.current_wallet['address']}\033[0m")
             print(f"\nDo you really want to delete this wallet?")
@@ -243,7 +243,7 @@ class Client:
 
     def change_wallet(self):
         os.system("clear")
-        print("\n\033[92mVerfügbare Wallets:\033[0m")
+        print("\n\033[92mAvailable Wallets:\033[0m")
         if not self.wallets:
             print("\n\033[91mNo wallets available!\033[0m")
             time.sleep(1.8)
@@ -255,10 +255,10 @@ class Client:
             print(f"{i+1} - \033[92m[{wallet['wallet_name']}]\033[0m {wallet['address']} - {balance} ETH")
 
         try:
-            choice = int(input("\nNummer > ")) - 1
+            choice = int(input("\nNumber > ")) - 1
             if 0 <= choice < len(self.wallets):
                 self.current_wallet = self.wallets[choice]
-                print(f"\n\033[92mWallet erfolgreich gewechselt\033[0m")
+                print(f"\n\033[92mWallet successfully changed\033[0m")
                 time.sleep(1.8)
                 os.system("clear")
             else:
@@ -276,8 +276,8 @@ class Client:
             time.sleep(1.8)
             return
         try:
-            to_address = input("Empfänger-Adresse > ")
-            amount = float(input("ETH Menge > "))
+            to_address = input("Recipient address > ")
+            amount = float(input("ETH amount > "))
 
             response = requests.get(
                 f"{self.base_url}/wallet/{self.current_wallet['address']}",
@@ -336,7 +336,7 @@ class Client:
                 self.settings()
             elif option == "4" or option == "exit":
                 time.sleep(1.4)
-                realistic_typing("\033[91mProgramm wird beendet...\033[0m")
+                realistic_typing("\033[91mProgram will be closed...\033[0m")
                 break
             else:
                 print("\n\033[91mInvalid option\033[0m")
