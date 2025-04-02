@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+web3
+eth-account
+mysql-connector-python
+pydantic
+python-dotenv
