@@ -25,7 +25,7 @@ class WalletResponse(BaseModel):
     address: str
     private_key: str
     wallet_name: str
-    memoric_phrase: str | None = None
+    mnemonic_phrase: str | None = None
 
 class WalletListResponse(BaseModel):
     address: str
@@ -71,7 +71,7 @@ class DatabaseManager:
             conn = mysql.connector.connect(**self.db_config)
             return conn
         except mysql.connector.Error as e:
-            raise HTTPException(status_code=500, detail=f"Datenbankfehler: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
     def init_database(self):
         conn = self.create_connection()
@@ -216,7 +216,7 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 async def get_api_key(api_key_header: str = Security(api_key_header)):
     if not api_key_header or api_key_header != API_KEY:
-        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Fehlender oder falscher API Key")
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Missing or invalid API Key")
     return api_key_header
 
 # Send ETH POST Request
@@ -282,15 +282,15 @@ async def create_wallet(wallet_data: WalletCreate, api_key: str = Depends(get_ap
                 address=account.address,
                 private_key=account.key.hex(),
                 wallet_name=wallet_data.wallet_name,
-                memoric_phrase=mnemonic
+                mnemonic_phrase=mnemonic
             )
         except mysql.connector.Error as e:
-            raise HTTPException(status_code=500, detail=f"Fehler beim Speichern der Wallet: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error saving wallet: {str(e)}")
         finally:
             cursor.close()
             conn.close()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Fehler bei der Wallet-Erstellung: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating wallet: {str(e)}")
 
 # Get wallet GET Request
 @app.get("/wallet/{address}", response_model=WalletResponse)
@@ -303,7 +303,7 @@ async def get_wallet(address: str, api_key: str = Depends(get_api_key)):
         wallet = cursor.fetchone()
 
         if wallet is None:
-            raise HTTPException(status_code=404, detail="Wallet nicht gefunden")
+            raise HTTPException(status_code=404, detail="Wallet not found")
 
         balance = eth_manager.w3.eth.get_balance(address)
         wallet['balance'] = eth_manager.w3.from_wei(balance, 'ether')
@@ -324,7 +324,7 @@ async def delete_wallet(address: str, api_key: str = Depends(get_api_key)):
         wallet = cursor.fetchone()
 
         if not wallet:
-            raise HTTPException(status_code=404, detail="Wallet nicht gefunden")
+            raise HTTPException(status_code=404, detail="Wallet not found")
 
         cursor.execute("DELETE FROM transactions WHERE wallet_id = %s", (wallet['id'],))
 
@@ -335,7 +335,7 @@ async def delete_wallet(address: str, api_key: str = Depends(get_api_key)):
 
     except mysql.connector.Error as e:
         conn.rollback()
-        raise HTTPException(status_code=500, detail=f"Datenbankfehler: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     finally:
         cursor.close()
         conn.close()
@@ -386,7 +386,7 @@ async def import_wallet(wallet_data: WalletImport, api_key: str = Depends(get_ap
         except mysql.connector.Error as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Fehler beim Speichern der importierten Wallet: {str(e)}"
+                detail=f"Error saving imported wallet: {str(e)}"
             )
         finally:
             cursor.close()
@@ -395,7 +395,7 @@ async def import_wallet(wallet_data: WalletImport, api_key: str = Depends(get_ap
     except ValueError as e:
         raise HTTPException(
             status_code=400,
-            detail="Ungültiger Private Key"
+            detail="Invalid Private Key"
         )
 
 # Get all transactions GET Request
