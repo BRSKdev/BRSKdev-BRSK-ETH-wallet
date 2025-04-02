@@ -35,7 +35,7 @@ def realistic_typing(text):
 # Client Class
 class Client:
     def __init__(self):
-        self.base_url = "http://localhost:8000"
+        self.base_url = os.getenv("HOST")
         self.api_key = api_key
         self.headers = {"X-API-Key": self.api_key}
         self.version = self.get_version()
